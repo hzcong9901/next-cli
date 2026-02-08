@@ -2,14 +2,14 @@
 
 > 🚀 Production-ready, pure frontend Web3 dApp starter for 2026 — No backend, no database, just modern Web3.
 
-A lightweight, highly customizable Next.js 15 Web3 scaffold featuring React 19, wagmi v2, viem v2, RainbowKit 2.x, and Privy authentication. Built with 2026 best practices including Partial Prerendering (PPR), React Compiler, Tailwind CSS v4, and shadcn/ui.
+A lightweight, highly customizable Next.js 16 Web3 scaffold featuring React 19, wagmi v2, viem v2, RainbowKit 2.x, and Privy authentication. Built with 2026 best practices including React Compiler, Tailwind CSS v4, and shadcn/ui.
 
 ## ✨ Features
 
 ### Core Stack
-- **Next.js 15** with App Router, PPR (Partial Prerendering), and experimental React Compiler
+- **Next.js 16** with App Router and React Compiler
 - **React 19** with Server Components and Suspense for optimal data fetching
-- **TypeScript 5.7+** for type safety
+- **TypeScript 5.9+** for type safety
 - **Tailwind CSS v4** with CSS-first configuration
 - **shadcn/ui** component system (beautifully designed, accessible)
 
@@ -30,7 +30,7 @@ A lightweight, highly customizable Next.js 15 Web3 scaffold featuring React 19, 
 - ✅ Client Components only for wallet interactions
 - ✅ Simulate → Write → Wait pattern for all contract writes
 - ✅ Unified error handling with toast feedback
-- ✅ SSR-friendly configuration
+- ✅ Client-only Web3 providers for build stability with Turbopack
 - ✅ Zero backend dependencies
 
 ## 🚀 Quick Start
@@ -48,7 +48,7 @@ pnpm install
 # Set up environment variables
 cp .env.example .env.local
 
-# Start development server
+# Start development server (Turbopack)
 pnpm dev
 ```
 
@@ -123,6 +123,7 @@ project/
 │   │   ├── chains.ts           # Supported chains
 │   │   ├── wagmi.ts            # wagmi + RainbowKit config
 │   │   └── privy.ts            # Privy config
+│   ├── empty-module.ts         # Turbopack empty alias target
 │   └── utils/                  # Utility functions
 │       ├── cn.ts               # Class name merger
 │       ├── format.ts           # formatAddress, formatBalance
@@ -150,7 +151,7 @@ project/
 
 ## 🔧 Configuration
 
-### Enabling React Compiler & PPR
+### Enabling React Compiler
 
 In `next.config.ts`:
 
@@ -158,21 +159,30 @@ In `next.config.ts`:
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Enable Partial Prerendering (incremental adoption)
-  experimental: {
-    ppr: 'incremental',
-    // Enable React Compiler
-    reactCompiler: true,
-  },
+  // Enable React Compiler
+  reactCompiler: true,
 };
 
 export default nextConfig;
 ```
 
-To opt-in a route to PPR, add at the top of your page/layout:
+If you need advanced rendering strategies, prefer route-level caching and streaming instead of experimental PPR flags.
+
+### Turbopack Settings
+
+This project builds with Turbopack by default. Node-only modules used by some Web3 libraries are aliased to an empty module:
 
 ```typescript
-export const experimental_ppr = true;
+const nextConfig: NextConfig = {
+  turbopack: {
+    resolveAlias: {
+      fs: './lib/empty-module.ts',
+      net: './lib/empty-module.ts',
+      tls: './lib/empty-module.ts',
+      '@react-native-async-storage/async-storage': './lib/empty-module.ts',
+    },
+  },
+};
 ```
 
 ### Adding shadcn/ui Components

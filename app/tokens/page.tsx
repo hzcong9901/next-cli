@@ -4,9 +4,6 @@ import { mainnet } from 'viem/chains';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Enable Partial Prerendering
-export const experimental_ppr = true;
-
 /**
  * Create a public client for server-side chain data fetching
  * 

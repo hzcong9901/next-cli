@@ -7,9 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ConnectWalletButton } from '@/components/wallet/connect-button';
 import { NetworkStatus } from '@/components/wallet/network-status';
 
-// Enable Partial Prerendering for this page
-export const experimental_ppr = true;
-
 /**
  * Home Page
  * 

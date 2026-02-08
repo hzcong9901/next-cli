@@ -3,10 +3,18 @@
 import type { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 
+import dynamic from 'next/dynamic';
 import { ThemeProvider } from './theme-provider';
-import { Web3Provider } from './wagmi-provider';
-import { PrivyProvider } from './privy-provider';
 import { isPrivyEnabled } from '@/lib/config/privy';
+
+const Web3Provider = dynamic(
+  () => import('./wagmi-provider').then((mod) => mod.Web3Provider),
+  { ssr: false }
+);
+const PrivyProvider = dynamic(
+  () => import('./privy-provider').then((mod) => mod.PrivyProvider),
+  { ssr: false }
+);
 
 interface ProvidersProps {
   children: ReactNode;

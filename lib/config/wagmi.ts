@@ -8,7 +8,7 @@ import { supportedChains, defaultChain } from './chains';
  * WalletConnect Project ID
  * Get yours at https://cloud.walletconnect.com/
  */
-const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+const walletConnectProjectId = process.env['NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID'];
 
 if (!walletConnectProjectId) {
   console.warn(
@@ -20,7 +20,7 @@ if (!walletConnectProjectId) {
 /**
  * Optional: Alchemy API Key for better RPC performance
  */
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID;
+const alchemyId = process.env['NEXT_PUBLIC_ALCHEMY_ID'];
 
 /**
  * RPC Transports Configuration
@@ -67,8 +67,8 @@ export const wagmiConfig = getDefaultConfig({
   projectId: walletConnectProjectId ?? 'YOUR_PROJECT_ID',
   chains: supportedChains,
   transports,
-  // Enable SSR support for Next.js
-  ssr: true,
+  // Disable SSR to avoid browser-only APIs during build
+  ssr: false,
 });
 
 /**

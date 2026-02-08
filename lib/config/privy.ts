@@ -5,7 +5,7 @@ import { supportedChains, defaultChain } from './chains';
  * Privy App ID
  * Get yours at https://dashboard.privy.io/
  */
-export const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? '';
+export const privyAppId = process.env['NEXT_PUBLIC_PRIVY_APP_ID'] ?? '';
 
 /**
  * Check if Privy is enabled
@@ -53,10 +53,9 @@ export const privyConfig: PrivyClientConfig = {
   // Embedded wallet configuration
   embeddedWallets: {
     // Automatically create wallet on login for users without one
-    createOnLogin: 'users-without-wallets',
-    // Require user confirmation for transactions
-    // Set to false for smoother UX (use with caution)
-    requireUserPasswordOnCreate: false,
+    ethereum: {
+      createOnLogin: 'users-without-wallets',
+    },
     // Show wallet UI in the Privy modal
     showWalletUIs: true,
   },

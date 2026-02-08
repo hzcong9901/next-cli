@@ -7,9 +7,13 @@ import {
 } from 'wagmi';
 import { toast } from 'sonner';
 import { useEffect, useCallback } from 'react';
-import type { Abi, Address } from 'viem';
+import type { Abi, Address, ContractFunctionArgs, ContractFunctionName } from 'viem';
 
-interface UseContractWriteOptions<TAbi extends Abi, TFunctionName extends string> {
+type WriteFunctionName<TAbi extends Abi> = ContractFunctionName<TAbi, 'nonpayable' | 'payable'>;
+type WriteArgs<TAbi extends Abi, TFunctionName extends WriteFunctionName<TAbi>> =
+  ContractFunctionArgs<TAbi, 'nonpayable' | 'payable', TFunctionName>;
+
+interface UseContractWriteOptions<TAbi extends Abi, TFunctionName extends WriteFunctionName<TAbi>> {
   /** Contract address */
   address: Address;
   /** Contract ABI */
@@ -17,7 +21,7 @@ interface UseContractWriteOptions<TAbi extends Abi, TFunctionName extends string
   /** Function name to call */
   functionName: TFunctionName;
   /** Function arguments */
-  args?: readonly unknown[];
+  args?: WriteArgs<TAbi, TFunctionName>;
   /** Value to send (in wei) */
   value?: bigint;
   /** Enable simulation */
@@ -55,7 +59,7 @@ interface UseContractWriteOptions<TAbi extends Abi, TFunctionName extends string
  *   },
  * });
  */
-export function useContractWrite<TAbi extends Abi, TFunctionName extends string>({
+export function useContractWrite<TAbi extends Abi, TFunctionName extends WriteFunctionName<TAbi>>({
   address,
   abi,
   functionName,
@@ -69,20 +73,22 @@ export function useContractWrite<TAbi extends Abi, TFunctionName extends string>
   const toastId = `contract-write-${address}-${functionName}`;
 
   // 1. Simulate the transaction
-  const {
-    data: simulation,
-    error: simulationError,
-    isLoading: isSimulating,
-  } = useSimulateContract({
+  const simulateParams = {
     address,
     abi,
     functionName,
     args,
-    value,
+    ...(value !== undefined ? { value } : {}),
     query: {
       enabled: simulateEnabled,
     },
-  });
+  } as Parameters<typeof useSimulateContract>[0];
+
+  const simulateResult = useSimulateContract(simulateParams);
+  const simulation = simulateResult.data as
+    | { request?: Parameters<typeof writeContract>[0] }
+    | undefined;
+  const { error: simulationError, isLoading: isSimulating } = simulateResult;
 
   // 2. Write to contract
   const {

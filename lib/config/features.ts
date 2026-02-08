@@ -10,7 +10,7 @@ export const features = {
    * When enabled, provides embedded wallets + social login
    * When disabled, falls back to RainbowKit wallet-only auth
    */
-  privy: Boolean(process.env.NEXT_PUBLIC_PRIVY_APP_ID),
+  privy: Boolean(process.env['NEXT_PUBLIC_PRIVY_APP_ID']),
 
   /**
    * Enable internationalization with next-intl

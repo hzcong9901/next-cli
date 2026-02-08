@@ -21,15 +21,15 @@ const nextConfig: NextConfig = {
     // Routes must opt-in with: export const experimental_ppr = true
     ppr: process.env['NEXT_ENABLE_PPR'] === 'true' ? 'incremental' : false,
 
-    // Enable React Compiler for automatic optimizations
-    // This replaces manual memoization in most cases
-    reactCompiler: true,
-
-    // Alternative: Opt-in mode (only components with "use memo" directive)
-    // reactCompiler: {
-    //   compilationMode: 'annotation',
-    // },
   },
+  // Enable React Compiler for automatic optimizations
+  // This replaces manual memoization in most cases
+  reactCompiler: true,
+
+  // Alternative: Opt-in mode (only components with "use memo" directive)
+  // reactCompiler: {
+  //   compilationMode: 'annotation',
+  // },
 
   /**
    * Image Optimization
@@ -53,18 +53,17 @@ const nextConfig: NextConfig = {
   },
 
   /**
-   * Webpack Configuration
+   * Turbopack Configuration
    * Handle Web3 library compatibility
    */
-  webpack: (config) => {
-    // Required for some Web3 libraries that use Node.js modules
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      net: false,
-      tls: false,
-    };
-    return config;
+  turbopack: {
+    resolveAlias: {
+      // Required for some Web3 libraries that use Node.js modules
+      fs: './lib/empty-module.ts',
+      net: './lib/empty-module.ts',
+      tls: './lib/empty-module.ts',
+      '@react-native-async-storage/async-storage': './lib/empty-module.ts',
+    },
   },
 
   /**
@@ -76,14 +75,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
-  /**
-   * ESLint
-   * Run during builds
-   */
-  eslint: {
-    // Set to true to ignore ESLint errors during build (not recommended)
-    ignoreDuringBuilds: false,
-  },
 };
 
 export default nextConfig;
